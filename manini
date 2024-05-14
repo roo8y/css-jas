@@ -1,0 +1,119 @@
+{
+  "short_name": "Jas",
+  "dir": "auto",
+  "name": "Jasrard art and studio",
+  "description": "Jasrard Art and Studio(JAS) offers a carefully curated selection of cutting-edge high-fashion pieces and accessories",
+  "background_color": "#ffffff",
+  "theme_color": "#000fed",
+  "display": "fullscreen",
+  "orientation": "any",
+  "start_url": "https://www.jasrard.ca/",
+  "scope": "https://www.jasrard.ca",
+  "id": "jas",
+  "prefer_related_applications": false,
+  "related_applications": [],
+"screenshots": [
+    {
+      "src": "https://www.jasrard.ca/web/image/1697-ca887064/scone.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://www.jasrard.ca/web/image/1694-e81385c2/sctwo.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://www.jasrard.ca/web/image/1695-37950787/sctree.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://www.jasrard.ca/web/image/1696-5eb71576/scfor.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg"
+    }
+  ],
+
+  "icons": [
+    {
+      "src": "https://www.jasrard.ca/web/image/1392-64c648a6/applog512.PNG",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://www.jasrard.ca/web/image/1392-64c648a6/applog512.PNG",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "display_override": [
+    "fullscreen",
+    "standalone",
+    "window-controls-overlay"
+  ],
+  
+"shortcuts": [
+    {
+      "name": "Wishlist",
+      "url": "https://www.jasrard.ca/shop/wishlist",
+      "description": "List of favorite items",
+      "icons": [
+        {
+          "src": "https://www.jasrard.ca/web/image/1462-3f16b7cc/faviii.PNG",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Store",
+      "url": "https://www.jasrard.ca/shop",
+      "description": "Shop latest products",
+      "icons": [
+        {
+          "src": "https://www.jasrard.ca/web/image/1464-ced148d5/shopiii.PNG",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+"splash_screens": [
+    {
+      "src": "https://www.jasrard.ca/web/image/1936-e647f7e4/im2048x2732.png",
+      "sizes": "2048x2732",
+      "type": "image/png"
+    },
+    {
+      "src": "https://www.jasrard.ca/web/image/1937-3ba3bef6/im1668x2224.png",
+      "sizes": "1668x2224",
+      "type": "image/png"
+    },
+    {
+      "src": "https://www.jasrard.ca/web/image/1938-9a20b635/im1536x2048.png",
+      "sizes": "1536x2048",
+      "type": "image/png"
+    },
+    {
+      "src": "https://www.jasrard.ca/web/image/1939-7ce59433/im1242x2208.png",
+      "sizes": "1242x2208",
+      "type": "image/png"
+    },
+    {
+      "src": "https://www.jasrard.ca/web/image/1940-0dfef4bc/im1125x2436.png",
+      "sizes": "1125x2436",
+      "type": "image/png"
+    },
+    {
+      "src": "https://www.jasrard.ca/web/image/1941-db006e5f/im750x1334.png",
+      "sizes": "750x1334",
+      "type": "image/png"
+    },
+    {
+      "src": "https://www.jasrard.ca/web/image/1942-ea9c0588/im640x1136.png",
+      "sizes": "640x1136",
+      "type": "image/png"
+    }
+  ]
+}
