@@ -1,0 +1,68 @@
+/* eslint-disable no-restricted-globals */
+const cacheName = "odoo-sw-cache";
+const cachedRequests = ["/web/offline"];
+
+self.addEventListener("install", (event) => {
+    event.waitUntil(
+        caches.open(cacheName).then((cache) => cache.addAll(cachedRequests))
+    );
+});
+
+const navigateOrDisplayOfflinePage = async (request) => {
+    try {
+        return await fetch(request);
+    } catch (requestError) {
+        if (
+            request.method === "GET" &&
+            ["Failed to fetch", "Load failed"].includes(requestError.message)
+        ) {
+            if (cachedRequests.includes("/web/offline")) {
+                const cache = await caches.open(cacheName);
+                const cachedResponse = await cache.match("/web/offline");
+                if (cachedResponse) {
+                    return cachedResponse;
+                }
+            }
+        }
+        throw requestError;
+    }
+};
+
+self.addEventListener("fetch", (event) => {
+    if (
+        (event.request.mode === "navigate" && event.request.destination === "document") ||
+        event.request.headers.get("accept").includes("text/html")
+    ) {
+        event.respondWith(
+            (async () => {
+                try {
+                    const response = await navigateOrDisplayOfflinePage(event.request);
+                    return response;
+                } catch (error) {
+                    const offlineResponse = await caches.match("/web/offline");
+                    if (offlineResponse) {
+                        return offlineResponse;
+                    }
+                    throw error;
+                }
+            })()
+        );
+    }
+});
+
+self.addEventListener("message", (event) => {
+    if (event.data && event.data.type === "SKIP_WAITING") {
+        self.skipWaiting();
+    }
+});
+
+const CACHE = "pwabuilder-offline";
+
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
+
+workbox.routing.registerRoute(
+    new RegExp('/*'),
+    new workbox.strategies.StaleWhileRevalidate({
+        cacheName: CACHE
+    })
+);
