@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
 const cacheName = "odoo-sw-cache";
-const cachedRequests = ["/web/offline"];
+const cachedRequests = ["/offline"];
 
 self.addEventListener("install", (event) => {
     event.waitUntil(
@@ -16,9 +16,9 @@ const navigateOrDisplayOfflinePage = async (request) => {
             request.method === "GET" &&
             ["Failed to fetch", "Load failed"].includes(requestError.message)
         ) {
-            if (cachedRequests.includes("/web/offline")) {
+            if (cachedRequests.includes("/offline")) {
                 const cache = await caches.open(cacheName);
-                const cachedResponse = await cache.match("/web/offline");
+                const cachedResponse = await cache.match("/offline");
                 if (cachedResponse) {
                     return cachedResponse;
                 }
@@ -39,7 +39,7 @@ self.addEventListener("fetch", (event) => {
                     const response = await navigateOrDisplayOfflinePage(event.request);
                     return response;
                 } catch (error) {
-                    const offlineResponse = await caches.match("/web/offline");
+                    const offlineResponse = await caches.match("/offline");
                     if (offlineResponse) {
                         return offlineResponse;
                     }
