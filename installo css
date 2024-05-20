@@ -20,10 +20,6 @@
     display: none;
 }
 
-.container {
-    margin: 8px;
-}
-
 .ios-pwa-banner {
     background-color: #D3D3D3;
     color: #383838;
