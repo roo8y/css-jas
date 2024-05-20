@@ -1,0 +1,33 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.matchMedia('(display-mode: fullscreen)').matches) {
+        const savedNavBar = document.querySelector('.floating-nav-bar');
+        
+        if (!savedNavBar) {
+          const navBar = document.createElement('div');
+          navBar.classList.add('floating-nav-bar');
+          
+          const createIconButton = (iconClass, url) => {
+            const button = document.createElement('button');
+            const icon = document.createElement('i');
+            icon.className = iconClass;
+            button.appendChild(icon);
+            button.addEventListener('click', () => { window.location.href = url; });
+            return button;
+          };
+          
+          const addButton = (iconClass, url) => {
+            const button = createIconButton(iconClass, url);
+            navBar.appendChild(button);
+          };
+          
+          addButton('fa fa-home', 'https://www.jasrard.ca');
+          addButton('fa fa-shopping-bag', 'https://www.jasrard.ca/shop');
+          addButton('fa fa-shopping-cart', 'https://www.jasrard.ca/shop/cart');
+          addButton('fa fa-user', 'https://www.jasrard.ca/my');
+          
+          document.body.appendChild(navBar);
+        }
+      }
+    });
+  </script>
