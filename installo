@@ -1,26 +1,22 @@
-function closeBanner() {
-        let installBanner = document.getElementById('install');
-        if (installBanner) {
-            installBanner.style.display = 'none';
-            localStorage.setItem('isBannerClosed', 'true');
-        }
-    }
-
-    function displayInstallContent() {
+document.addEventListener('DOMContentLoaded', function () {
+    const isBannerClosed = localStorage.getItem('isBannerClosed');
+    const ua = window.navigator.userAgent;
+    const iOS = /iPad|iPhone|iPod/.test(ua);
+    const isWebKit = /WebKit/.test(ua);
+  
+    if (isBannerClosed !== 'true' && iOS && isWebKit && !ua.includes('CriOS') && !navigator.standalone) {
         let installBanner = document.getElementById('install');
         if (installBanner) {
             installBanner.style.display = 'block';
         }
     }
+});
 
-    window.onload = function () {
-        const isBannerClosed = localStorage.getItem('isBannerClosed');
-        const ua = window.navigator.userAgent;
-        const iOS = /iPad|iPhone|iPod/.test(ua);
-        const isWebKit = /WebKit/.test(ua);
-
-        if (isBannerClosed !== 'true' && iOS && isWebKit && !ua.includes('CriOS') && !navigator.standalone) {
-            displayInstallContent();
-        }
-    };
-
+// Function to close the banner and set the state in localStorage
+function closeBanner() {
+    let installBanner = document.getElementById('install');
+    if (installBanner) {
+        installBanner.style.display = 'none';
+        localStorage.setItem('isBannerClosed', 'true');
+    }
+}
