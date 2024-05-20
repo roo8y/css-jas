@@ -11,11 +11,7 @@
    limitations under the License.
 */
 
-body {
-    margin: 0px;
-    padding: 0px;
-    font-size: 14px;
-}
+
 
 /* not used for banner */
 p {
