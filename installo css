@@ -10,18 +10,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-
-
-
-/* not used for banner */
-p {
-    font-size : 120%;
-}
-
-h1 {
-    font-size: 250%;
-}
-
 /* banner css */
 
 .show-element {
