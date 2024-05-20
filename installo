@@ -1,24 +1,172 @@
-// Fonction pour insérer dynamiquement des images en base64 dans le contenu de la bannière
-function insertBase64Images() {
-    // Chaînes d'images encodées en base64
-    const shareImage = 'data:image/png;base64,data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAActpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+QWRvYmUgSW1hZ2VSZWFkeTwveG1wOkNyZWF0b3JUb29sPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KKS7NPQAAAsxJREFUSA2lVjFrFFEQnnm7l2iiF2LuEggWImchFjb5B4KFhZ3+AC1io1hZJedyYGNjERANaB9FG0FBBGuLIBamukYQRXN4GnKSy+6+cebt283buz3dmIF3O2/ezHwz82ZnD+BfdIm8VKW+vLsmK92Dc5bJ9sUEpFL9+nL4bPYOkSzhUzk4OpnMYdDh86wYBqjFQU1HrxGoDoA9qzRBAJ2O8s+nOuaZ92B2xQBECIh0JqCxbzp6yUpnp7r+8a1j8WMADdUfn678mj7xmUE+zCn/wscAd8HaDGJkJRg8kH0XvvqI8A6VPtdewT6LjrCfo+2VU32RyVkXwC+yHSHjyCUSWQW1rTej57KGjEU3tQO2dchBlwMk2DvmCpQkc1eurvXFogTgCbfiZYxrSzsXUal7DBQDmPaMEPiOgR51WpVbLMsCqjXDuwrwKoHuAChuZdJiQ6Budlr4AqzPxOANyF3EgF6DL/ckkb7GNpMQx2I0gYjvJT5OjvcJcRe8JaKfnOZv8FCB1j1E7wEQNIyG9ZkAzLNYCBUh6Y3N1thDsx/4YaUMYLPlv+JjWRnNNsMbnEGytz6zlFMtjuqw4blF4UsC3BgHJV1Ezg01rtN4u28B5zk5blVju3eHxk0egDRnbrO5DaG8C6LVDpLac6mSTEU2wyUNMDJeTNcxJ7biw6E8gHNQxHKEOeMiHSmzK98XACobsethkD9gBtOD/ob2/5mB6R6llPsWZx01BOIIypXITtXvAd43tumkdRyNYssBiLWApB+YQN70clQeQPw9Le84hf/ruE6VDvLMZ2A6wLbx4rrPA6vURcLiugQa8tAbiiUPwOORh1ZS39WFEFaH9EcJEhsSW/4MOZQDQB2LQnVmiU77GFYjz44Nx6CI9XkOR1TZ4t8qT4sEzCrmAFi2rSb9OdyBDVIVyP6vFHl1ZPLl8LiYeMgH3Qu3nSP4A9EHFXrGnVaNAAAAAElFTkSuQmCC';
-    const closeImage = 'data:image/png;base64,data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAQAAADZc7J/AAAAl0lEQVR4Ae2TMQ6DMBTFfA+kHqkSUmcKgd5/BIaEqsOfWqyILgx4jewl/3FxSm74q8ODlcQeL1Za769sFNKOXthYaBAS5Wci9ExH4AlG143xKxH6k0oiMbluTEQi9B5BEpW6fNtHH+CfQCEd13PcxVF9IHnC9V6us1qvTsjVScJ1SeicM53MbKZBaFlkcYmZO473aTghF2/X9XbQ39L36gAAAABJRU5ErkJggg==';
+/*
+   Copyright 2018 Locomote Limited
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+// TODO: only inject HTML if the version is iOS
 
-    // Obtenir les éléments par leurs ID et mettre à jour la source avec les images codées en base64
-    document.getElementById('share').src = shareImage;
-    document.getElementById('close').src = closeImage;
+// Injects a banner in the DOM and controls when to show it depending on iOS verson
+
+// The min iOS version where the banner is showed
+var miniOSVersionSupported = '11.3';
+
+console.log(`iOS PWA Banner: Min iOS version supported: ${miniOSVersionSupported}`);
+
+// Use for testin. Set to true always show the banner (any platform)
+let disableBannerCheck = false;
+
+// Detects if device is in standalone mode
+const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+// Detects if device is iphone, ipad or ipod
+function isIos(){
+    console.log(window.navigator.userAgent)
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    return /iphone|ipad|ipod/.test( userAgent );
 }
 
-// Vérification au chargement de la page pour afficher la bannière et insérer les images en base64
-document.addEventListener('DOMContentLoaded', function() {
-    const isBannerClosed = localStorage.getItem('isBannerClosed');
-    const ua = window.navigator.userAgent;
-    const iOS = /iPad|iPhone|iPod/.test(ua);
-    const isWebKit = /WebKit/.test(ua);
-    const isIOS = iOS && isWebKit && !ua.includes('CriOS');
+/**
+  * Check if device platform is iOS and get the iOS version
+  * @return     Array with the platform version e.g ['0S 11_2',11,'2']
+  */
+function iOSversion(){
+    console.log(window.navigator.platform)
+    if (/iP(hone|od|ad)/.test(window.navigator.platform)) {
+        // supports iOS 2.0 and later: <http://bit.ly/TJjs1V>
+        var v = (window.navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
+        return [parseInt(v[1], 10), parseInt(v[2], 10), parseInt(v[3] || 0, 10)];
+    }
+}
 
-    if (isBannerClosed !== 'true' && isIOS && !navigator.standalone) {
-        document.getElementById('install').style.display = 'block';
-        insertBase64Images(); // Appeler la fonction pour insérer les images en base64
+/**
+  * Check if the devices version is same or above the min version
+  * @return false if version is pre minVersionSupported or not iOS. true if version is equal or post minVersionSupported
+  */
+function isMinIosVersionSupported(){
+    if ( !isIos() ) return false;
+    let platformVersionArray = iOSversion();
+    if ( platformVersionArray ){
+        let minVersionSupportedArray = miniOSVersionSupported.split('.').map( (v) => {return parseInt( v )} );       // [11,3]
+        let [ minVersionSupported, minSubversionSupported ] = minVersionSupportedArray;
+        let [ platformVersion, platformSubversion ] = platformVersionArray;
+        console.log(`Device iOS version: ${platformVersion}.${platformSubversion}`);
+        console.log('Min iOS verson supported: ' + minVersionSupported);
+        if ( platformVersion > minVersionSupported ) {
+            return true;
+        }
+        if ( platformVersion == minVersionSupported && platformSubversion >= minSubversionSupported){
+            return true;
+        }
+        return false;
+    } else {
+        return false;
+    }
+}
+
+/**
+  * A DOM element than can be showed and hidded.
+  * @param      selector The element selector.
+  * @return     Methods to show or hide, or register a click event.
+  */
+let Element = function( selector ){
+    function showElement(){
+        document.querySelector( selector ).classList.remove( 'hide-element' );
+        document.querySelector( selector ).classList.add( 'show-element' );
+    }
+    function hideElement(){
+        document.querySelector( selector ).classList.remove( 'show-element' );
+        document.querySelector( selector ).classList.add( 'hide-element' );
+    }
+    let addEventListener = (fn) => {
+        // iOS devices only works with 'touchstart' events
+        let eventType = 'click';
+        if ( !isIos ) eventType = 'touchstart';
+        document.addEventListener( eventType, event => {
+            if (!event.target.closest( selector )) return;
+            fn( event );
+        }, false );
+    }
+    return {
+        show:               showElement,
+        hide:               hideElement,
+        addEventListener:   addEventListener
+    }
+}
+
+let BannerText = function( selectorOne, selectorTwo){
+    let textOneElement = new Element( selectorOne );
+    let textTwoElement = new Element( selectorTwo );
+    function showTextOne(){
+        textOneElement.show();
+        textTwoElement.hide();
+    }
+    function showTextTwo(){
+        textTwoElement.show();
+        textOneElement.hide();
+    }
+    return {
+        showTextOne: showTextOne,
+        showTextTwo: showTextTwo
+    }
+}
+
+let getBannerHtml = function( appName ){
+    return `
+    <div class="ios-pwa-banner hide-element">
+        <div class="app-icon"><img class="vertical-align" src="https://www.jasrard.ca/web/image/website/1/logo/JAS?unique=eb2ddd5" /></div>
+        <div class="banner-text">
+            <span class="banner-text-one">Install ${JAS} to your home screen</span>
+            <span class="banner-text-two hide-element">Tap <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAActpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+QWRvYmUgSW1hZ2VSZWFkeTwveG1wOkNyZWF0b3JUb29sPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KKS7NPQAAAsxJREFUSA2lVjFrFFEQnnm7l2iiF2LuEggWImchFjb5B4KFhZ3+AC1io1hZJedyYGNjERANaB9FG0FBBGuLIBamukYQRXN4GnKSy+6+cebt283buz3dmIF3O2/ezHwz82ZnD+BfdIm8VKW+vLsmK92Dc5bJ9sUEpFL9+nL4bPYOkSzhUzk4OpnMYdDh86wYBqjFQU1HrxGoDoA9qzRBAJ2O8s+nOuaZ92B2xQBECIh0JqCxbzp6yUpnp7r+8a1j8WMADdUfn678mj7xmUE+zCn/wscAd8HaDGJkJRg8kH0XvvqI8A6VPtdewT6LjrCfo+2VU32RyVkXwC+yHSHjyCUSWQW1rTej57KGjEU3tQO2dchBlwMk2DvmCpQkc1eurvXFogTgCbfiZYxrSzsXUal7DBQDmPaMEPiOgR51WpVbLMsCqjXDuwrwKoHuAChuZdJiQ6Budlr4AqzPxOANyF3EgF6DL/ckkb7GNpMQx2I0gYjvJT5OjvcJcRe8JaKfnOZv8FCB1j1E7wEQNIyG9ZkAzLNYCBUh6Y3N1thDsx/4YaUMYLPlv+JjWRnNNsMbnEGytz6zlFMtjuqw4blF4UsC3BgHJV1Ezg01rtN4u28B5zk5blVju3eHxk0egDRnbrO5DaG8C6LVDpLac6mSTEU2wyUNMDJeTNcxJ7biw6E8gHNQxHKEOeMiHSmzK98XACobsethkD9gBtOD/ob2/5mB6R6llPsWZx01BOIIypXITtXvAd43tumkdRyNYssBiLWApB+YQN70clQeQPw9Le84hf/ruE6VDvLMZ2A6wLbx4rrPA6vURcLiugQa8tAbiiUPwOORh1ZS39WFEFaH9EcJEhsSW/4MOZQDQB2LQnVmiU77GFYjz44Nx6CI9XkOR1TZ4t8qT4sEzCrmAFi2rSb9OdyBDVIVyP6vFHl1ZPLl8LiYeMgH3Qu3nSP4A9EHFXrGnVaNAAAAAElFTkSuQmCC" alt="share" /> and "Add to homescreen"</span>
+        </div>
+        <div class="closing-button">
+            <i class="fas fa-remove"></i>
+        </div>
+    </div>`;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    if ( disableBannerCheck || ( isIos() && isMinIosVersionSupported() && !isInStandaloneMode()) ) {
+
+        // Get the app title from the header. More info: https://github.com/locomote-sh/build-web-manifest
+        let appTitle = document.head.querySelector('[name=apple-mobile-web-app-title][content]').content || 'APP';
+
+        // Create a container element and insert the banner HTML
+        let bannerContainerElement = document.createElement('div');
+        bannerContainerElement.innerHTML = getBannerHtml(appTitle);
+        document.body.appendChild(bannerContainerElement);
+
+        // Instantiate elements
+        let iOSBannerElement =         new Element('.ios-pwa-banner');
+        let closingButtonElement =     new Element('.closing-button');
+        let bannerText =               new BannerText( '.banner-text-one', '.banner-text-two' );
+
+        // show the banner only on iOS
+        iOSBannerElement.show();
+
+        // register event listeners
+        closingButtonElement.addEventListener(( event ) => {
+            iOSBannerElement.hide();
+        });
+
+        let textOneVisible = true;
+        iOSBannerElement.addEventListener(( event ) => {
+            if ( textOneVisible ){
+                bannerText.showTextOne();
+                textOneVisible = false;
+            }else{
+                bannerText.showTextTwo();
+                textOneVisible = true;
+            }
+        });
+    }else{
+        console.log(`iOS version not supporting PWA. Not showing the banner.`)
     }
 });
