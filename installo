@@ -1,24 +1,26 @@
-// Function to close the banner and set the state in localStorage
 function closeBanner() {
-  document.getElementById('install').style.display = 'none';
-  localStorage.setItem('isBannerClosed', 'true');
-}
+        let installBanner = document.getElementById('install');
+        if (installBanner) {
+            installBanner.style.display = 'none';
+            localStorage.setItem('isBannerClosed', 'true');
+        }
+    }
 
-// Check on page load for displaying the banner
-document.addEventListener('DOMContentLoaded', function() {
-  const isBannerClosed = localStorage.getItem('isBannerClosed');
-  const ua = window.navigator.userAgent;
-  const iOS = /iPad|iPhone|iPod/.test(ua);
-  const isWebKit = /WebKit/.test(ua);
-  const isIOS = iOS && isWebKit && !ua.includes('CriOS');
+    function displayInstallContent() {
+        let installBanner = document.getElementById('install');
+        if (installBanner) {
+            installBanner.style.display = 'block';
+        }
+    }
 
-  if (isBannerClosed !== 'true' && isIOS && !navigator.standalone) {
-    document.getElementById('install').style.display = 'block';
-  }
-});
+    window.onload = function () {
+        const isBannerClosed = localStorage.getItem('isBannerClosed');
+        const ua = window.navigator.userAgent;
+        const iOS = /iPad|iPhone|iPod/.test(ua);
+        const isWebKit = /WebKit/.test(ua);
 
-function displayInstallContent() {
-  document.getElementById('install').style.display = 'block';
-}
-
+        if (isBannerClosed !== 'true' && iOS && isWebKit && !ua.includes('CriOS') && !navigator.standalone) {
+            displayInstallContent();
+        }
+    };
 
