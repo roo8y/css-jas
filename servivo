@@ -1,0 +1,70 @@
+/* eslint-disable no-restricted-globals */
+const cacheName = "odoo-sw-cache";
+const cachedRequests = ["/offpage"];
+const CACHE = "pwabuilder-offline";
+
+self.addEventListener("install", (event) => {
+    event.waitUntil(
+        caches.open(cacheName).then((cache) => cache.addAll(cachedRequests))
+    );
+    // Add background sync registration here if needed
+    self.registration.periodicSync.register('syncData', {
+        minInterval: 24 * 60 * 60 * 1000, // Example: sync every 24 hours
+    });
+});
+
+self.addEventListener('sync', (event) => {
+    if (event.tag === 'syncData') {
+        event.waitUntil(syncDataWithServer());
+    }
+});
+
+async function syncDataWithServer() {
+    // Add your synchronization logic here
+    try {
+        const response = await fetch('/sync-endpoint');
+        const data = await response.json();
+        // Process the synchronized data
+        // Example: update local caches, databases, or user interface
+    } catch (error) {
+        console.error('Sync failed:', error);
+        // Option: retry synchronization, or handle the error
+    }
+}
+
+self.addEventListener("fetch", (event) => {
+    if (
+        (event.request.mode === "navigate" && event.request.destination === "document") ||
+        event.request.headers.get("accept").includes("text/html")
+    ) {
+        event.respondWith(
+            (async () => {
+                try {
+                    const response = await navigateOrDisplayOfflinePage(event.request);
+                    return response;
+                } catch (error) {
+                    const offlineResponse = await caches.match("/offpage");
+                    if (offlineResponse) {
+                        return offlineResponse;
+                    }
+                    throw error;
+                }
+            })()
+        );
+    }
+});
+
+self.addEventListener("message", (event) => {
+    if (event.data && event.data.type === "SKIP_WAITING") {
+        self.skipWaiting();
+    }
+});
+
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
+
+workbox.routing.registerRoute(
+    new RegExp('/*'),
+    new workbox.strategies.StaleWhileRevalidate({
+        cacheName: CACHE
+    })
+);
