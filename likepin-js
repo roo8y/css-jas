@@ -1,0 +1,86 @@
+// Get references to HTML elements
+const categoryList = document.getElementById('category-list');
+const collectionList = document.getElementById('collection-list');
+const savedOutfitList = document.getElementById('saved-outfit-list');
+const createCollectionBtn = document.getElementById('create-collection-btn');
+const outfitDetailSection = document.getElementById('outfit-detail');
+
+// Initialize local storage
+const storage = window.localStorage;
+
+// Load categories from local storage
+const categories = storage.getItem('categories');
+if (categories) {
+    categoryList.innerHTML = categories;
+} else {
+    storage.setItem('categories', categoryList.innerHTML);
+}
+
+// Load collections from local storage
+const collections = storage.getItem('collections');
+if (collections) {
+    collectionList.innerHTML = collections;
+} else {
+    storage.setItem('collections', '');
+}
+
+// Load saved outfits from local storage
+const savedOutfits = storage.getItem('savedOutfits');
+if (savedOutfits) {
+    savedOutfitList.innerHTML = savedOutfits;
+} else {
+    storage.setItem('savedOutfits', '');
+}
+
+// Event listeners
+categoryList.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') {
+        const category = e.target.getAttribute('data-category');
+        // Load outfit ideas for the selected category
+        loadOutfitIdeas(category);
+    }
+});
+
+createCollectionBtn.addEventListener('click', () => {
+    // Create a new collection
+    const newCollectionName = prompt('Enter a name for your new collection:');
+    if (newCollectionName) {
+        const collectionHTML = `<li><a href="#" data-collection="${newCollectionName}">${newCollectionName}</a></li>`;
+        collectionList.innerHTML += collectionHTML;
+        storage.setItem('collections', collectionList.innerHTML);
+    }
+});
+
+collectionList.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') {
+        const collectionName = e.target.getAttribute('data-collection');
+        // Load outfits for the selected collection
+        loadCollectionOutfits(collectionName);
+    }
+});
+
+savedOutfitList.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') {
+        const outfitId = e.target.getAttribute('data-outfit-id');
+        // Load outfit details
+        loadOutfitDetails(outfitId);
+    }
+});
+
+// Functions
+function loadOutfitIdeas(category) {
+    // TO DO: Load outfit ideas for the selected category from API or database
+    console.log(`Loading outfit ideas for ${category}...`);
+}
+
+function loadCollectionOutfits(collectionName) {
+    // TO DO: Load outfits for the selected collection from API or database
+    console.log(`Loading outfits for ${collectionName}...`);
+}
+
+function loadOutfitDetails(outfitId) {
+    // TO DO: Load outfit details for the selected outfit from API or database
+    console.log(`Loading details for outfit ${outfitId}...`);
+    outfitDetailSection.innerHTML = `Outfit details for ${outfitId}`;
+    outfitDetailSection.style.display = 'block';
+}
