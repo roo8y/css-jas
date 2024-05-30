@@ -67,6 +67,8 @@
         display: inline-block;
         font-size: 12px;
         padding: 5px 10px;
+        color: black;
+        border: black;
     }
     .cuscus-container {
             color: black; /* Text color inside the container */
