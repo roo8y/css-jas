@@ -69,6 +69,7 @@
         padding: 5px 10px;
         color: black;
         border: 1px solid #000000;
+        background-color: transparent;
     }
     .cuscus-container {
             color: black; /* Text color inside the container */
