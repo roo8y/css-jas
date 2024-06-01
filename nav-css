@@ -1,0 +1,4 @@
+.floating-nav-bar{position:fixed;bottom:20px;left:0;right:0;margin:0 auto;background-color:rgba(255,255,255,0.7);border:1px solid rgba(204,204,204,0.5);border-radius:5px;padding:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);width:88%;display:flex;justify-content: space-between;;backdrop-filter:blur(10px)}
+.floating-nav-bar button{margin-right:10px;background-color:rgba(0,0,0,0.7);color:#fff;border:none;border-radius:3px;padding:8px 12px;cursor:pointer;text-decoration:none;transition:background-color 0.3s;margin:0 5px}
+.floating-nav-bar button i{font-size:20px;margin-right:0}
+.floating-nav-bar button:hover{background-color:rgba(0,0,0,0.3)}
