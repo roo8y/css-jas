@@ -23,6 +23,7 @@
           addButton('fa fa-home', 'https://www.jasrard.ca');
           addButton('fa fa-shopping-bag', 'https://www.jasrard.ca/shop');
           addButton('fa fa-shopping-cart', 'https://www.jasrard.ca/shop/cart');
+          addButton('fa fa-1x fa-heart', 'https://www.jasrard.ca/shop/wishlist');
           addButton('fa fa-user', 'https://www.jasrard.ca/my');
           
           document.body.appendChild(navBar);
