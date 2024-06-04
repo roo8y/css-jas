@@ -1,3 +1,4 @@
+document.addEventListener("DOMContentLoaded", function() {
 <!-- Install banner -->
 <div id="install">
     <img id="logo" data-src="https://www.jasrard.ca/web/image/1391-33623540/applog192.PNG" class="lazy" loading="lazy" alt="Logo">
@@ -28,3 +29,4 @@
       document.getElementById('install').style.display = 'block';
     }
 </script> 
+});
