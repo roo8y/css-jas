@@ -1,6 +1,6 @@
 .floating-nav-bar {
   position: fixed;
-  top: 0;
+  bottom: 0; /* Position it at the bottom of the screen */
   left: 0;
   width: 100%;
   background-color: white;
