@@ -8,7 +8,6 @@
   display: flex;
   justify-content: space-around;
   align-items: flex-start;
-  
   z-index: 1000;
   border-top: 1px solid black;
 }
@@ -17,7 +16,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding-top: 8px;
+  padding-top: 10px;
 }
 
 .floating-nav-bar i {
