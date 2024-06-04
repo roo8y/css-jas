@@ -4,7 +4,7 @@
   left: 0;
   width: 100%;
   background-color: white;
-  height: 62px; /* Adjust the height as needed */
+  height: 65px; /* Adjust the height as needed */
   display: flex;
   justify-content: space-around;
   align-items: flex-start;
