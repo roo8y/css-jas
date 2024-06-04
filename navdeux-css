@@ -1,0 +1,28 @@
+.floating-nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px;
+  z-index: 1000; /* Adjust the z-index as needed */
+}
+
+.floating-nav-bar button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.floating-nav-bar i {
+  font-size: 24px; /* You can adjust the size of the icons */
+  color: black; /* You can set the color of the icons */
+  transition: color 0.3s; /* Add a smooth transition effect */
+}
+
+.floating-nav-bar i:hover {
+  color: gray; /* Change the color on hover */
+}
