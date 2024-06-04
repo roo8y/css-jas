@@ -9,7 +9,8 @@
   justify-content: space-around;
   align-items: flex-start;
   padding: 5px;
-  z-index: 1000; /* Adjust the z-index as needed */
+  z-index: 1000;
+  border-top: 2px solid black;
 }
 
 .floating-nav-bar button {
