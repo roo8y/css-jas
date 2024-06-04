@@ -1,5 +1,5 @@
     document.addEventListener('DOMContentLoaded', function() {
-      if (window.matchMedia('(display-mode: standalone)').matches) {
+      if (window.matchMedia('(display-mode: fullscreen)').matches) {
         const savedNavBar = document.querySelector('.floating-nav-bar');
         
         if (!savedNavBar) {
