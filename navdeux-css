@@ -4,7 +4,7 @@
   left: 0;
   width: 100%;
   background-color: white;
-  height: 65px; /* Adjust the height as needed */
+  height: 70px; /* Adjust the height as needed */
   display: flex;
   justify-content: space-around;
   align-items: flex-start;
@@ -17,7 +17,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding-top: -5px;
+  padding-top: -4px;
 }
 
 .floating-nav-bar i {
