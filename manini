@@ -120,5 +120,12 @@
     "shopping",
     "lifestyle",
     "utilities"
-  ]
+  ],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  }
+
 }
