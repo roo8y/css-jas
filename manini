@@ -115,5 +115,10 @@
       "sizes": "640x1136",
       "type": "image/png"
     }
+  ],
+  "categories": [
+    "shopping",
+    "lifestyle",
+    "utilities"
   ]
 }
