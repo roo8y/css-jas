@@ -1,4 +1,3 @@
-<script>
 document.addEventListener('DOMContentLoaded', function() {
   if (window.matchMedia('(display-mode: standalone)').matches) {
     const savedNavBar = document.querySelector('.floating-nav-bar');
@@ -36,4 +35,3 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 });
-</script>
