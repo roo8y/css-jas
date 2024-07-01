@@ -1,6 +1,6 @@
-/* eslint-disable no-restricted-globals */
+/* eslint-disable */
 const cacheName = "odoo-sw-cache";
-const cachedRequests = ["/offpage", "/jasplayg"];  // Include the second page here
+const cachedRequests = ["/offpage", "/jasplayg"];
 
 // Import Workbox library
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
@@ -18,17 +18,9 @@ const navigateOrDisplayOfflinePage = async (request) => {
             ["Failed to fetch", "Load failed"].includes(requestError.message)
         ) {
             const cache = await caches.open(cacheName);
-            if (cachedRequests.includes("/offpage")) {
-                const cachedResponse = await cache.match("/offpage");
-                if (cachedResponse) {
-                    return cachedResponse;
-                }
-            }
-            if (cachedRequests.includes("/jasplayg")) {
-                const cachedResponse = await cache.match("/jasplayg");
-                if (cachedResponse) {
-                    return cachedResponse;
-                }
+            const cachedResponse = await cache.match(request);
+            if (cachedResponse) {
+                return cachedResponse;
             }
         }
         throw requestError;
@@ -50,25 +42,12 @@ self.addEventListener("fetch", (event) => {
                     if (offlineResponse) {
                         return offlineResponse;
                     }
-                    const offlineResponseJasplayg = await caches.match("/jasplayg");
-                    if (offlineResponseJasplayg) {
-                        return offlineResponseJasplayg;
-                    }
                     throw error;
                 }
             })()
         );
     }
 });
-
-// Register route with Workbox
-const CACHE = "pwabuilder-offline";
-workbox.routing.registerRoute(
-    new RegExp('/*'),
-    new workbox.strategies.StaleWhileRevalidate({
-        cacheName: CACHE
-    })
-);
 
 // Handle skip waiting for immediate activation
 self.addEventListener("message", (event) => {
