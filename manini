@@ -4,14 +4,15 @@
   "name": "Jasrard art and studio",
   "description": "Jasrard Art and Studio(JAS) offers a carefully curated selection of cutting-edge high-fashion pieces and accessories",
   "background_color": "#ffffff",
-  "theme_color": "#000fed",
+  "theme_color": "#ffffff",
   "display": "standalone",
   "orientation": "any",
   "start_url": "https://www.jasrard.ca/",
   "scope": "https://www.jasrard.ca",
   "id": "jas",
   "scope_extensions": [
-    "/jasteemaker/"
+    "/jasteemaker/",
+    "/jasplayg/"
   ],
   "prefer_related_applications": false,
   "related_applications": [],
