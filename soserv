@@ -1,11 +1,12 @@
 /* eslint-disable no-restricted-globals */
 const cacheName = "odoo-sw-cache";
-const cachedRequests = ["/offpage"];
+const cachedRequests = ["/offpage", "/jasplayg"];  // Include the second page here
+
+// Import Workbox library
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
 
 self.addEventListener("install", (event) => {
-    event.waitUntil(
-        caches.open(cacheName).then((cache) => cache.addAll(cachedRequests))
-    );
+    event.waitUntil(caches.open(cacheName).then((cache) => cache.addAll(cachedRequests)));
 });
 
 const navigateOrDisplayOfflinePage = async (request) => {
@@ -16,9 +17,15 @@ const navigateOrDisplayOfflinePage = async (request) => {
             request.method === "GET" &&
             ["Failed to fetch", "Load failed"].includes(requestError.message)
         ) {
+            const cache = await caches.open(cacheName);
             if (cachedRequests.includes("/offpage")) {
-                const cache = await caches.open(cacheName);
                 const cachedResponse = await cache.match("/offpage");
+                if (cachedResponse) {
+                    return cachedResponse;
+                }
+            }
+            if (cachedRequests.includes("/jasplayg")) {
+                const cachedResponse = await cache.match("/jasplayg");
                 if (cachedResponse) {
                     return cachedResponse;
                 }
@@ -43,6 +50,10 @@ self.addEventListener("fetch", (event) => {
                     if (offlineResponse) {
                         return offlineResponse;
                     }
+                    const offlineResponseJasplayg = await caches.match("/jasplayg");
+                    if (offlineResponseJasplayg) {
+                        return offlineResponseJasplayg;
+                    }
                     throw error;
                 }
             })()
@@ -50,19 +61,67 @@ self.addEventListener("fetch", (event) => {
     }
 });
 
-self.addEventListener("message", (event) => {
-    if (event.data && event.data.type === "SKIP_WAITING") {
-        self.skipWaiting();
-    }
-});
-
+// Register route with Workbox
 const CACHE = "pwabuilder-offline";
-
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
-
 workbox.routing.registerRoute(
     new RegExp('/*'),
     new workbox.strategies.StaleWhileRevalidate({
         cacheName: CACHE
     })
 );
+
+// Handle skip waiting for immediate activation
+self.addEventListener("message", (event) => {
+    if (event.data && event.data.type === "SKIP_WAITING") {
+        self.skipWaiting();
+    }
+});
+
+// Handle notification clicks
+self.addEventListener("notificationclick", (event) => {
+    event.notification.close();
+    if (event.notification.data) {
+        const { action, model, res_id } = event.notification.data;
+        if (model === "discuss.channel") {
+            clients.openWindow(`/web#action=${action}&active_id=${res_id}`);
+        } else {
+            clients.openWindow(`/web#model=${model}&id=${res_id}`);
+        }
+    }
+});
+
+// Handle push notifications
+self.addEventListener("push", (event) => {
+    const notification = event.data.json();
+    self.registration.showNotification(notification.title, notification.options || {});
+});
+
+// Handle subscription changes
+self.addEventListener("pushsubscriptionchange", async (event) => {
+    const subscription = await self.registration.pushManager.subscribe(
+        event.oldSubscription.options
+    );
+    await fetch("/web/dataset/call_kw/mail.partner.device/register_devices", {
+        headers: {
+            "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+            id: 1,
+            jsonrpc: "2.0",
+            method: "call",
+            params: {
+                model: "mail.partner.device",
+                method: "register_devices",
+                args: [],
+                kwargs: {
+                    ...subscription.toJSON(),
+                    previousEndpoint: event.oldSubscription.endpoint,
+                },
+                context: {},
+            },
+        }),
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+    });
+});
