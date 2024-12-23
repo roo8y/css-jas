@@ -1,0 +1,132 @@
+/* eslint-disable */
+const CACHE_NAME = 'jasrard-cache-v3'; // Increment version on changes
+const API_CACHE_NAME = 'jasrard-api-cache';
+const STATIC_CACHE_NAME = 'jasrard-static-cache';
+
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.6.0/workbox-sw.js');
+
+const { registerRoute } = workbox.routing;
+const { StaleWhileRevalidate, NetworkFirst, CacheFirst } = workbox.strategies;
+const { CacheableResponsePlugin } = workbox.cacheableResponse;
+const { ExpirationPlugin } = workbox.expiration;
+
+// Manually precache essential assets (adjust paths as needed)
+const precachedAssets = [
+    '/', // Cache the main HTML file
+    '/index.html',
+    '/manifest.json',
+    '/css/style.css', // Example CSS file
+    '/js/script.js', // Example JS file
+    '/images/logo.png', // Example image
+    '/offpage' // Cache offline page
+    // Add other critical assets here
+];
+
+workbox.precaching.precacheAndRoute(precachedAssets);
+
+
+// Cache API responses
+registerRoute(
+    ({ request }) => request.url.startsWith('/api/') || request.url.includes('/web/dataset/call_kw/'),
+    new StaleWhileRevalidate({
+        cacheName: API_CACHE_NAME,
+        plugins: [
+            new CacheableResponsePlugin({
+                statuses: [0, 200],
+            }),
+            new ExpirationPlugin({
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60, // 1 hour
+            }),
+        ],
+    })
+);
+
+// Cache static assets (images, fonts, etc.)
+registerRoute(
+    ({ request }) => ['image', 'font'].includes(request.destination),
+    new CacheFirst({
+        cacheName: STATIC_CACHE_NAME,
+        plugins: [
+            new CacheableResponsePlugin({
+                statuses: [0, 200],
+            }),
+            new ExpirationPlugin({
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+            }),
+        ],
+    })
+);
+
+// Navigation requests (HTML pages)
+registerRoute(
+    ({ request }) => request.mode === 'navigate',
+    new NetworkFirst({
+        cacheName: CACHE_NAME,
+        plugins: [
+            {
+                handlerDidError: async () => {
+                    return caches.match('/offpage');
+                },
+            },
+        ],
+    })
+);
+
+// Include OneSignal SDK
+importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
+
+// Handle skip waiting
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
+
+// Your existing push notification and subscription handling code:
+self.addEventListener("notificationclick", (event) => {
+    event.notification.close();
+    if (event.notification.data) {
+        const { action, model, res_id } = event.notification.data;
+        if (model === "discuss.channel") {
+            clients.openWindow(`/web#action=${action}&active_id=${res_id}`);
+        } else {
+            clients.openWindow(`/web#model=${model}&id=${res_id}`);
+        }
+    }
+});
+
+self.addEventListener("push", (event) => {
+    const notification = event.data.json();
+    self.registration.showNotification(notification.title, notification.options || {});
+});
+
+self.addEventListener("pushsubscriptionchange", async (event) => {
+    const subscription = await self.registration.pushManager.subscribe(
+        event.oldSubscription.options
+    );
+    await fetch("/web/dataset/call_kw/mail.partner.device/register_devices", {
+        headers: {
+            "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+            id: 1,
+            jsonrpc: "2.0",
+            method: "call",
+            params: {
+                model: "mail.partner.device",
+                method: "register_devices",
+                args: [],
+                kwargs: {
+                    ...subscription.toJSON(),
+                    previousEndpoint: event.oldSubscription.endpoint,
+                },
+                context: {},
+            },
+        }),
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+    });
+});
