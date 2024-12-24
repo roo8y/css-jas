@@ -1,129 +1,135 @@
 /* eslint-disable */
-const CACHE_NAME = 'jasrard-cache-v4'; // Increment version on changes
-const API_CACHE_NAME = 'jasrard-api-cache';
-const STATIC_CACHE_NAME = 'jasrard-static-cache';
-
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.6.0/workbox-sw.js');
-
-const { registerRoute } = workbox.routing;
-const { StaleWhileRevalidate, NetworkFirst, CacheFirst } = workbox.strategies;
-const { CacheableResponsePlugin } = workbox.cacheableResponse;
-const { ExpirationPlugin } = workbox.expiration;
-
-// Manually precache essential assets (ADJUST THESE PATHS!)
-const precachedAssets = [
-    '/',
-    '/manifest.json',
-    '/offpage', 
-    '/jasplayg', 
-    '/shop' 
-
+const cacheName = "odoo-sw-cache-v5"; // Increment version on changes
+const cachedRequests = [
+    "/", // Important: Cache the root URL
+    "/offpage",
+    "/jasplayg",
+    "/shop",
+    "/mycss.css",
+    "/web/static/src/libs/fontawesome/fonts/fontawesome-webfont.woff2?v=4.7.0",
+    "/web/static/lib/odoo_ui_icons/fonts/odoo_ui_icons.woff2",
+    "/manifest.json",
+    // Add other critical static assets here (CSS, JS, images, etc.)
 ];
 
-workbox.precaching.precacheAndRoute(precachedAssets);
+// Import Workbox library
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.6.0/workbox-sw.js');
 
-// Cache API responses
-registerRoute(
-    ({ request }) => request.url.startsWith('/api/') || request.url.includes('/web/dataset/call_kw/'),
-    new StaleWhileRevalidate({
-        cacheName: API_CACHE_NAME,
-        plugins: [
-            new CacheableResponsePlugin({
-                statuses: [0, 200],
-            }),
-            new ExpirationPlugin({
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60, // 1 hour
-            }),
-        ],
-    })
-);
+self.addEventListener("install", (event) => {
+    console.log('[Service Worker] Installing...');
+    event.waitUntil(
+        caches.open(cacheName)
+            .then((cache) => {
+                console.log('[Service Worker] Caching app shell and content');
+                return cache.addAll(cachedRequests);
+            })
+            .catch(error => console.error('[Service Worker] Cache addAll failed:', error))
+    );
+});
 
-// Cache static assets (images, fonts)
-registerRoute(
-    ({ request }) => ['image', 'font'].includes(request.destination),
-    new CacheFirst({
-        cacheName: STATIC_CACHE_NAME,
-        plugins: [
-            new CacheableResponsePlugin({
-                statuses: [0, 200],
-            }),
-            new ExpirationPlugin({
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
-            }),
-        ],
-    })
-);
+const navigateOrDisplayOfflinePage = async (request) => {
+    try {
+        return await fetch(request);
+    } catch (requestError) {
+        if (
+            request.method === "GET" &&
+            ["Failed to fetch", "Load failed"].includes(requestError.message)
+        ) {
+            const cache = await caches.open(cacheName);
+            const cachedResponse = await cache.match(request);
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+        }
+        throw requestError;
+    }
+};
 
-// Navigation requests (HTML pages)
-registerRoute(
-    ({ request }) => request.mode === 'navigate',
-    new NetworkFirst({
-        cacheName: CACHE_NAME,
-        plugins: [
-            {
-                handlerDidError: async () => {
-                    return caches.match('/offpage');
-                },
-            },
-        ],
-    })
-);
+self.addEventListener("fetch", (event) => {
+    if (
+        (event.request.mode === "navigate" && event.request.destination === "document") ||
+        event.request.headers.get("accept").includes("text/html")
+    ) {
+        event.respondWith(
+            (async () => {
+                try {
+                    const response = await navigateOrDisplayOfflinePage(event.request);
+                    return response;
+                } catch (error) {
+                    const offlineResponse = await caches.match("/offpage");
+                    if (offlineResponse) {
+                        return offlineResponse;
+                    }
+                    throw error;
+                }
+            })()
+        );
+    }
+});
 
-// Include OneSignal SDK
-importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
-
-// Handle skip waiting (CRUCIAL for update flow)
-self.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'SKIP_WAITING') {
+// Handle skip waiting for immediate activation
+self.addEventListener("message", (event) => {
+    if (event.data && event.data.type === "SKIP_WAITING") {
         self.skipWaiting();
     }
 });
 
-// Your existing push notification and subscription handling code:
+// Notification and Subscription Handling (Implement your logic here)
 self.addEventListener("notificationclick", (event) => {
     event.notification.close();
-    if (event.notification.data) {
-        const { action, model, res_id } = event.notification.data;
-        if (model === "discuss.channel") {
-            clients.openWindow(`/web#action=${action}&active_id=${res_id}`);
-        } else {
-            clients.openWindow(`/web#model=${model}&id=${res_id}`);
-        }
-    }
+    console.log('Notification clicked. Implement your logic here.');
+    // Example: clients.openWindow('/some-url');
 });
 
 self.addEventListener("push", (event) => {
-    const notification = event.data.json();
-    self.registration.showNotification(notification.title, notification.options || {});
+    console.log('[Service Worker] Push Received.');
+    if (event.data) {
+        const notificationData = event.data.json();
+        const title = notificationData.title || 'Notification';
+        const options = notificationData.options || {};
+        event.waitUntil(self.registration.showNotification(title, options));
+    } else {
+        console.log('[Service Worker] Push had no data.');
+    }
 });
 
+
 self.addEventListener("pushsubscriptionchange", async (event) => {
-    const subscription = await self.registration.pushManager.subscribe(
-        event.oldSubscription.options
-    );
-    await fetch("/web/dataset/call_kw/mail.partner.device/register_devices", {
-        headers: {
-            "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-            id: 1,
-            jsonrpc: "2.0",
-            method: "call",
-            params: {
-                model: "mail.partner.device",
-                method: "register_devices",
-                args: [],
-                kwargs: {
-                    ...subscription.toJSON(),
-                    previousEndpoint: event.oldSubscription.endpoint,
-                },
-                context: {},
+    console.log('[Service Worker] Subscription changed.');
+    try {
+        const subscription = await self.registration.pushManager.subscribe(event.oldSubscription.options);
+        console.log('[Service Worker] New subscription:', subscription);
+        // Send the new subscription to your server
+         const response = await fetch("/web/dataset/call_kw/mail.partner.device/register_devices", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
             },
-        }),
-        method: "POST",
-        mode: "cors",
-        credentials: "include",
-    });
+            body: JSON.stringify({
+                id: 1,
+                jsonrpc: "2.0",
+                method: "call",
+                params: {
+                    model: "mail.partner.device",
+                    method: "register_devices",
+                    args: [],
+                    kwargs: {
+                        ...subscription.toJSON(),
+                        previousEndpoint: event.oldSubscription.endpoint,
+                    },
+                    context: {},
+                },
+            }),
+            mode: "cors",
+            credentials: "include",
+        });
+        if (!response.ok) {
+            console.error('Failed to send subscription to server:', response.status, response.statusText);
+        } else {
+            console.log('Subscription sent to server successfully.');
+        }
+
+    } catch (error) {
+        console.error('Error resubscribing:', error);
+    }
 });
