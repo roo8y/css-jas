@@ -5,9 +5,10 @@ const cachedRequests = [
     "/offpage",
     "/jasplayg",
     "/shop",
+    "/web/image/website/1/logo/JAS?unique=84332f8",
     "/mycss.css",
-    "/web/static/src/libs/fontawesome/fonts/fontawesome-webfont.woff2?v=4.7.0",
-    "/web/static/lib/odoo_ui_icons/fonts/odoo_ui_icons.woff2",
+    "/web/image/2242-13c6a7af/googllog.webp",
+    "/web/assets/1/8ee6096/web.assets_frontend.min.css",
     "/manifest.json"
 ];
 
