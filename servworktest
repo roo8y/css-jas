@@ -1,5 +1,5 @@
 /* eslint-disable */
-const CACHE_NAME = 'jasrard-cache-v3'; // Increment version on changes
+const CACHE_NAME = 'jasrard-cache-v3.5'; // Increment version on changes
 const API_CACHE_NAME = 'jasrard-api-cache';
 const STATIC_CACHE_NAME = 'jasrard-static-cache';
 
@@ -12,14 +12,11 @@ const { ExpirationPlugin } = workbox.expiration;
 
 // Manually precache essential assets (adjust paths as needed)
 const precachedAssets = [
-    '/', // Cache the main HTML file
-    '/index.html',
+    '/', // main HTML file
     '/manifest.json',
-    '/css/style.css', // Example CSS file
-    '/js/script.js', // Example JS file
-    '/images/logo.png', // Example image
-    '/offpage' // Cache offline page
-    // Add other critical assets here
+    '/offpage', 
+    '/jasplayg', 
+    '/shop' 
 ];
 
 workbox.precaching.precacheAndRoute(precachedAssets);
@@ -72,9 +69,6 @@ registerRoute(
         ],
     })
 );
-
-// Include OneSignal SDK
-// importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js'); // May use later
 
 // Handle skip waiting
 self.addEventListener('message', (event) => {
