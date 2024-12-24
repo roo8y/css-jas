@@ -24,7 +24,6 @@ const precachedAssets = [
 
 workbox.precaching.precacheAndRoute(precachedAssets);
 
-
 // Cache API responses
 registerRoute(
     ({ request }) => request.url.startsWith('/api/') || request.url.includes('/web/dataset/call_kw/'),
@@ -75,7 +74,7 @@ registerRoute(
 );
 
 // Include OneSignal SDK
-importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
+// importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js'); // May use later
 
 // Handle skip waiting
 self.addEventListener('message', (event) => {
