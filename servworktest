@@ -8,8 +8,7 @@ const cachedRequests = [
     "/mycss.css",
     "/web/static/src/libs/fontawesome/fonts/fontawesome-webfont.woff2?v=4.7.0",
     "/web/static/lib/odoo_ui_icons/fonts/odoo_ui_icons.woff2",
-    "/manifest.json",
-    // Add other critical static assets here (CSS, JS, images, etc.)
+    "/manifest.json"
 ];
 
 // Import Workbox library
