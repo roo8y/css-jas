@@ -1,10 +1,11 @@
 /* eslint-disable */
-const cacheName = "odoo-sw-cache-v8";
+const cacheName = "odoo-sw-cache-v8.2";
 const staticAssets = [
   "/",
   "/offpage",
   "/jasplayg",
   "/mycss.css",
+  "/splashy.js",
   "/web/image/website/1/logo/JAS",
   "/web/image/1392-64c648a6/applog512.PNG",
   "/web/image/2383-25e321e0/sauce512.webp",
