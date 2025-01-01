@@ -1,0 +1,64 @@
+/* eslint-disable */
+const cacheName = "odoo-sw-cache-v8";
+const staticAssets = [
+  "/",
+  "/offpage",
+  "/jasplayg",
+  "/shop",
+  "/mycss.css",
+  "/web/image/website/1/logo/JAS?unique=84332f8",
+  "/web/image/1392-64c648a6/applog512.PNG",
+  "/web/image/2383-25e321e0/sauce512.webp",
+  "/web/image/2242-13c6a7af/googllog.webp",
+  "/web/assets/1/8ee6096/web.assets_frontend.min.css",
+  "/manifest.json"
+];
+
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.6.0/workbox-sw.js');
+
+self.addEventListener("install", (event) => {
+  console.log('[Service Worker] Installing...');
+  event.waitUntil(
+    caches.open(cacheName).then((cache) => {
+      console.log('[Service Worker] Caching static assets');
+      return cache.addAll(staticAssets);
+    }).catch(error => console.error('[Service Worker] Cache addAll failed:', error))
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+  const isStaticAsset = staticAssets.includes(url.pathname);
+  const isNavigation = event.request.mode === "navigate" || (event.request.headers.get("accept") && event.request.headers.get("accept").includes("text/html"));
+
+  if (isStaticAsset) {
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        return response || fetch(event.request);
+      })
+    );
+  } else if (isNavigation) {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        console.log('[Service Worker] Network fetch failed, checking for offline page or static assets.');
+        return caches.match("/offpage").then(offlineResponse => {
+          if (offlineResponse) {
+            return offlineResponse;
+          }
+          console.log("[Service Worker] No offline page found, returning generic offline page");
+          return new Response("<h1>Offline</h1><p>You are currently offline. Please check your internet connection.</p>", {
+            headers: { 'Content-Type': 'text/html' },
+            status: 503, // Service Unavailable
+            statusText: "Service Unavailable"
+          });
+        });
+      })
+    );
+  }
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
