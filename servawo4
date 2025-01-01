@@ -10,7 +10,8 @@ const staticAssets = [
   "/web/image/1392-64c648a6/applog512.PNG",
   "/web/image/2383-25e321e0/sauce512.webp",
   "/web/image/2242-13c6a7af/googllog.webp",
-  "/web/assets/1/8ee6096/web.assets_frontend.min.css",
+  "/web/assets/1/f90df56/web.assets_frontend.min.css",
+  "/web/assets/1/8789456/web.assets_frontend_lazy.min.js",
   "/manifest.json"
 ];
 
