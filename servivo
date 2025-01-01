@@ -1,55 +1,46 @@
-/* eslint-disable no-restricted-globals */
-const cacheName = "odoo-sw-cache";
-const cachedRequests = ["/offpage"];
-const CACHE = "pwabuilder-offline";
+/* eslint-disable */
+const cacheName = "odoo-sw-cache-v6"; // Increment version on changes
+const staticAssets = [
+    "/", // Important: Cache the root URL
+    "/offpage",
+    "/jasplayg",
+    "/shop",
+    "/mycss.css",
+    "/web/image/website/1/logo/JAS?unique=84332f8",
+    "/web/image/1392-64c648a6/applog512.PNG",
+    "/web/image/2383-25e321e0/sauce512.webp",
+    "/web/image/2242-13c6a7af/googllog.webp",
+    "/web/assets/1/8ee6096/web.assets_frontend.min.css",
+    "/manifest.json"
+];
+
+// Import Workbox library (optional but recommended)
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.6.0/workbox-sw.js');
 
 self.addEventListener("install", (event) => {
+    console.log('[Service Worker] Installing...');
     event.waitUntil(
-        caches.open(cacheName).then((cache) => cache.addAll(cachedRequests))
+        caches.open(cacheName).then((cache) => {
+            console.log('[Service Worker] Caching static assets');
+            return cache.addAll(staticAssets);
+        }).catch(error => console.error('[Service Worker] Cache addAll failed:', error))
     );
-    // Add background sync registration here if needed
-    self.registration.periodicSync.register('syncData', {
-        minInterval: 24 * 60 * 60 * 1000, // Example: sync every 24 hours
-    });
 });
-
-self.addEventListener('sync', (event) => {
-    if (event.tag === 'syncData') {
-        event.waitUntil(syncDataWithServer());
-    }
-});
-
-async function syncDataWithServer() {
-    // Add your synchronization logic here
-    try {
-        const response = await fetch('/sync-endpoint');
-        const data = await response.json();
-        // Process the synchronized data
-        // Example: update local caches, databases, or user interface
-    } catch (error) {
-        console.error('Sync failed:', error);
-        // Option: retry synchronization, or handle the error
-    }
-}
 
 self.addEventListener("fetch", (event) => {
-    if (
-        (event.request.mode === "navigate" && event.request.destination === "document") ||
-        event.request.headers.get("accept").includes("text/html")
-    ) {
+    if (event.request.mode === "navigate" || (event.request.headers.get("accept") && event.request.headers.get("accept").includes("text/html"))) {
         event.respondWith(
-            (async () => {
-                try {
-                    const response = await navigateOrDisplayOfflinePage(event.request);
-                    return response;
-                } catch (error) {
-                    const offlineResponse = await caches.match("/offpage");
-                    if (offlineResponse) {
-                        return offlineResponse;
-                    }
-                    throw error;
-                }
-            })()
+            fetch(event.request)
+                .catch(() => { // Network fetch failed
+                    console.log('[Service Worker] Network fetch failed, serving offline page.');
+                    return caches.match("/offpage");
+                })
+        );
+    } else if(staticAssets.includes(new URL(event.request.url).pathname)){
+        event.respondWith(
+            caches.match(event.request).then((response) => {
+                return response || fetch(event.request);
+            })
         );
     }
 });
@@ -60,11 +51,7 @@ self.addEventListener("message", (event) => {
     }
 });
 
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
-
-workbox.routing.registerRoute(
-    new RegExp('/*'),
-    new workbox.strategies.StaleWhileRevalidate({
-        cacheName: CACHE
-    })
-);
+// Notification and Subscription Handling (Keep your existing logic)
+self.addEventListener("notificationclick", (event) => { /* ... */ });
+self.addEventListener("push", (event) => { /* ... */ });
+self.addEventListener("pushsubscriptionchange", async (event) => { /* ... */ });
