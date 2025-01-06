@@ -1,5 +1,5 @@
 /* eslint-disable */
-const cacheName = "odoo-sw-cache-v8.2";
+const cacheName = "odoo-sw-cache-v8.5";
 const staticAssets = [
   "/",
   "/offpage",
