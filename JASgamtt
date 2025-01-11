@@ -287,13 +287,13 @@ let parallelShotCount = 0;
 let lastPromoScore = 0; // Keep track of the score at the last promo
 
 // Image loading (Now with error handling)
-const playerImg = loadImage('player-ship.png');
-const enemyImg = loadImage('enemy-ship.png');
-const backgroundImg = loadImage('space-background.webp');
+const playerImg = loadImage('/web/image/3251-1f7ae7f0/player-ship.png');
+const enemyImg = loadImage('/web/image/3252-919c1c6e/enemy-ship.png');
+const backgroundImg = loadImage('/web/image/3256-ee7a091a/space-background.webp');
 const powerUpImgs = {
-    fireRate: loadImage('power-up.png'),
-    biggerShot: loadImage('big-fire-powerup.png'),
-    parallelShot: loadImage('parallel-fire-powerup.png')
+    fireRate: loadImage('/web/image/3255-6127b1bf/power-up.png'),
+    biggerShot: loadImage('/web/image/3253-861ca04e/big-fire-powerup.png'),
+    parallelShot: loadImage('/web/image/3254-94237309/parallel-fire-powerup.png')
 };
 
 function loadImage(src) {
