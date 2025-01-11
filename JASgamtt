@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="darkgray" />
+    <meta name="title" content="JAS - Space fight">
+    <meta name="description" content="A space shooter game for my clothing brand where you can win promo codes!">
+    <meta name="theme-color" content="#000000">
+    <title>JAS ZONE</title>
+    <style>
+    body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    user-select: none;
+    background-color: #000; /* Default background color */
+}
+
+#game-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Prevent scrollbars */
+}
+
+#title {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.2); /* Slightly darker background */
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 5px;
+    font-size: 18px; /* Slightly larger title */
+    font-weight: bold;
+    color: white;
+    z-index: 10;
+    font-family: sans-serif; /* Added a default font */
+    padding: 6px;
+}
+        
+.go-back-btn {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(255, 255, 255, 0.2); /* Slightly darker background */
+        border: 1px solid rgba(255,255,255,0.5);
+        border-radius: 5px;
+        color: yellow;
+        font-size: 12px;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+#gameCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+#ui {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    z-index: 10;
+    display: flex;
+    flex-direction: column; /* Stack score and lives vertically */
+    font-family: sans-serif;
+}
+
+#score, #lives {
+    margin-bottom: 5px; /* Space between score and lives */
+    font-size: 18px;
+}
+
+#autoFireBtn {
+    margin-top: 10px;
+    font-size: 14px;
+    padding: 8px 16px;
+    background-color: rgba(255, 255, 255, 0.2); /* Slightly darker background */
+    border: 1px solid rgba(255,255,255,0.5);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: sans-serif;
+}
+
+#mobile-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px; /* Reduced gap on mobile */
+    z-index: 10;
+}
+
+#mobile-controls button {
+    font-size: 24px; /* Larger buttons for touch */
+    padding: 15px 30px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: 10px;
+    touch-action: manipulation;
+    color: white;
+    font-family: sans-serif;
+    margin: 10px 45px;
+}
+
+#start-screen, #game-over, #pause-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 30px; /* More padding */
+    border-radius: 10px;
+    text-align: center;
+    font-family: sans-serif;
+    z-index: 11; /* Ensure it's on top */
+}
+
+#start-screen h1 {
+    margin-bottom: 15px;
+}
+
+#start-screen p {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+#start-btn, #restart-btn, #resume-btn {
+    font-size: 18px;
+    padding: 12px 24px;
+    background-color: #6e6e6e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Hide mobile controls on larger screens */
+@media (min-width: 768px) {
+    #mobile-controls {
+        display: none;
+    }
+}
+
+/* Styles for promo codes display */
+#promo-codes {
+    position: absolute;
+    top: 55px;
+    right: 10px;
+    z-index: 10;
+    color: white;
+    font-family: sans-serif;
+}
+
+#promo-codes .promo-code {
+    margin-bottom: 5px;
+    font-size: 12px;
+    background-color: rgba(60, 249, 26, 0.62); /* Semi-transparent green background */
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* Styles for the game message */
+#game-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px;
+    border-radius: 10px;
+    text-align: center;
+    font-family: sans-serif;
+    z-index: 20; /* Ensure it's on top of everything */
+    display: none; /* Initially hidden */
+    /* background-image: url('/backg22.png'); / Replace with your image path */
+    /* background-size: cover; / Cover the entire element */
+    /* background-position: center; / Center the background image */
+}
+
+#message-text {
+    font-size: 16px;
+    margin-bottom: 10px;
+    display: block; /* Ensure it takes up the full width for text animation */
+}
+
+#countdown {
+    font-size: 18px;
+    color: #FFD700; /* Gold color for countdown */
+}
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="title">JAS ZONE☄️</div>
+        <a href="/shop" class="go-back-btn">
+            BACK TO SHOP
+        </a>
+        <canvas id="gameCanvas"></canvas>
+        <div id="ui">
+            <div id="score">Score: 0</div>
+            <div id="lives">Lives: 3</div>
+            <button id="autoFireBtn">Auto Fire: OFF</button>
+        </div>
+        <div id="promo-codes"></div>
+        <div id="mobile-controls">
+            <button id="leftBtn">←</button>
+            <button id="rightBtn">→</button>
+        </div>
+        <div id="start-screen">
+            <h1>INSTRUCTIONS</h1>
+            <p>(WIN PROMO CODES⭐️)<br>MOVE with buttons or swipe<br>and to FIRE activate Auto FIRE.<br>GOOD LUCK! 🎱</p>
+            <button id="start-btn">Start Game</button>
+        </div>
+        <div id="game-message">
+            <span id="message-text"></span> 
+            <span id="countdown"></span>
+        </div>
+        <div id="game-over" class="hidden">
+            <h2>Game Over🚨</h2>
+            <p>Final Score⭐️: <span id="final-score">0</span></p>
+            <button id="restart-btn">Restart</button>
+        </div>
+        <div id="pause-screen" class="hidden">
+            <h2>Game Paused</h2>
+            <button id="resume-btn">Resume</button>
+        </div>
+    </div>
+    <script>
+    const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const leftBtn = document.getElementById('leftBtn');
+const rightBtn = document.getElementById('rightBtn');
+const autoFireBtn = document.getElementById('autoFireBtn');
+const startScreen = document.getElementById('start-screen');
+const startBtn = document.getElementById('start-btn');
+const gameOverScreen = document.getElementById('game-over');
+const finalScoreSpan = document.getElementById('final-score');
+const restartBtn = document.getElementById('restart-btn');
+const scoreDisplay = document.getElementById('score');
+const livesDisplay = document.getElementById('lives');
+const pauseScreen = document.getElementById('pause-screen');
+const resumeBtn = document.getElementById('resume-btn');
+const promoCodesContainer = document.getElementById('promo-codes');
+const gameMessage = document.getElementById('game-message');
+const messageText = document.getElementById('message-text'); // Get the message text element
+const countdown = document.getElementById('countdown'); // Get the countdown element
+
+let gameLoop;
+let player, enemies, bullets, stars, powerUps;
+let score = 0;
+let lives = 3;
+let gameOver = false;
+let gamePaused = false;
+let autoFire = false;
+let autoFireInterval;
+let swipeStartX = 0;
+
+// Constants
+const PLAYER_SPEED = 5;
+const ENEMY_SPEED = 2;
+const BULLET_SPEED = 7;
+const SPAWN_INTERVAL = 1500;
+const POWER_UP_INTERVAL = 8000;
+const STAR_COUNT = 150;
+const AUTO_FIRE_INTERVAL = 300;
+const MAX_ENEMIES = 10;
+
+// Promo Codes
+const promoCodes = ['SOJAS(5%)', 'WIN7ER(10%)', 'VANG25(15%)', 'JASSS25(20%)', 'FAM8JAS(20%)']; // Your custom promo codes
+let promoCodeIndex = 0;
+let parallelShotCount = 0;
+let lastPromoScore = 0; // Keep track of the score at the last promo
+
+// Image loading (Now with error handling)
+const playerImg = loadImage('player-ship.png');
+const enemyImg = loadImage('enemy-ship.png');
+const backgroundImg = loadImage('space-background.webp');
+const powerUpImgs = {
+    fireRate: loadImage('power-up.png'),
+    biggerShot: loadImage('big-fire-powerup.png'),
+    parallelShot: loadImage('parallel-fire-powerup.png')
+};
+
+function loadImage(src) {
+    const img = new Image();
+    img.src = src;
+    img.onerror = () => console.error(`Error loading image: ${src}`);
+    return img;
+}
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+function initGame() {
+    resizeCanvas();
+    player = {
+        x: canvas.width / 2,
+        y: canvas.height - 180,
+        width: 60,
+        height: 60,
+        speed: PLAYER_SPEED,
+        fireRate: AUTO_FIRE_INTERVAL,
+        biggerShot: false,
+        parallelShot: false,
+        invincible: false,
+        invincibleTimer: 0
+    };
+    enemies = [];
+    bullets = [];
+    stars = [];
+    powerUps = [];
+    score = 0;
+    lives = 3;
+    gameOver = false;
+    gamePaused = false;
+    promoCodeIndex = 0;
+    parallelShotCount = 0;
+    lastPromoScore = 0; // Reset the last promo score
+    scoreDisplay.textContent = `Score: ${score}`;
+    livesDisplay.textContent = `Lives: ${lives}`;
+    promoCodesContainer.innerHTML = ''; // Clear any existing promo codes
+    gameOverScreen.classList.add('hidden');
+    pauseScreen.classList.add('hidden');
+
+    for (let i = 0; i < STAR_COUNT; i++) {
+        stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 3 + 1,
+            speed: Math.random() * 0.5 + 0.5
+        });
+    }
+
+    gameLoop = setInterval(update, 1000 / 60);
+    setInterval(spawnEnemy, SPAWN_INTERVAL);
+    setInterval(spawnPowerUp, POWER_UP_INTERVAL);
+}
+
+
+function update() {
+    if (gamePaused) return;
+
+    ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'white';
+    stars.forEach(star => {
+        star.y += star.speed;
+        if (star.y > canvas.height) {
+            star.y = 0;
+            star.x = Math.random() * canvas.width;
+        }
+        ctx.fillRect(star.x, star.y, star.size, star.size);
+    });
+
+    if (player.invincible) {
+        player.invincibleTimer -= (1000 / 60);
+        if (player.invincibleTimer <= 0) {
+            player.invincible = false;
+        }
+    }
+
+    if (!player.invincible || Math.floor(player.invincibleTimer / 100) % 2 === 0) {
+        ctx.drawImage(playerImg, player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
+    }
+
+    enemies.forEach((enemy, index) => {
+        enemy.y += ENEMY_SPEED;
+        ctx.drawImage(enemyImg, enemy.x - enemy.width / 2, enemy.y - enemy.height / 2, enemy.width, enemy.height);
+
+        if (enemy.y > canvas.height) {
+            enemies.splice(index, 1);
+        }
+
+        if (!player.invincible && checkCollision(player, enemy)) {
+            lives--;
+            livesDisplay.textContent = `Lives: ${lives}`;
+            enemies.splice(index, 1);
+            player.invincible = true;
+            player.invincibleTimer = 2000;
+            if (lives <= 0) {
+                endGame();
+            }
+        }
+    });
+
+    bullets.forEach((bullet, index) => {
+        bullet.y -= BULLET_SPEED;
+        ctx.fillStyle = 'yellow';
+        ctx.fillRect(bullet.x - bullet.width / 2, bullet.y - bullet.height / 2, bullet.width, bullet.height);
+
+        if (bullet.y < 0) {
+            bullets.splice(index, 1);
+        }
+
+        enemies.forEach((enemy, enemyIndex) => {
+            if (checkCollision(bullet, enemy)) {
+                bullets.splice(index, 1);
+                enemies.splice(enemyIndex, 1);
+                score += 10;
+                scoreDisplay.textContent = `Score: ${score}`;
+
+                // Check for promo code conditions
+                checkPromoCodeConditions();
+            }
+        });
+    });
+
+    powerUps.forEach((powerUp, index) => {
+        powerUp.y += 2;
+        ctx.drawImage(powerUpImgs[powerUp.type], powerUp.x - 15, powerUp.y - 15, 30, 30);
+
+        if (powerUp.y > canvas.height) {
+            powerUps.splice(index, 1);
+        }
+
+        if (checkCollision(player, powerUp)) {
+            applyPowerUp(powerUp.type);
+            powerUps.splice(index, 1);
+
+            // Increment parallel shot count if power-up is parallelShot
+            if (powerUp.type === 'parallelShot') {
+                parallelShotCount++;
+            }
+        }
+    });
+}
+
+function spawnEnemy() {
+    if (!gameOver && enemies.length < MAX_ENEMIES) {
+        enemies.push({
+            x: Math.random() * (canvas.width - 50) + 25,
+            y: -50,
+            width: 40,
+            height: 28
+        });
+    }
+}
+
+function spawnPowerUp() {
+    if (!gameOver) {
+        const types = ['fireRate', 'biggerShot', 'parallelShot'];
+        const type = types[Math.floor(Math.random() * types.length)];
+        powerUps.push({
+            x: Math.random() * (canvas.width - 30) + 15,
+            y: -30,
+            width: 30,
+            height: 30,
+            type: type
+        });
+    }
+}
+
+function checkCollision(rect1, rect2) {
+    return rect1.x < rect2.x + rect2.width &&
+        rect1.x + rect1.width > rect2.x &&
+        rect1.y < rect2.y + rect2.height &&
+        rect1.y + rect1.height > rect2.y;
+}
+
+function moveLeft() {
+    player.x = Math.max(player.width / 2, player.x - player.speed);
+}
+
+function moveRight() {
+    player.x = Math.min(canvas.width - player.width / 2, player.x + player.speed);
+}
+
+
+function fire() {
+    const bulletWidth = player.biggerShot ? 8 : 4;
+    const bulletHeight = player.biggerShot ? 20 : 10;
+    if (player.parallelShot) {
+        bullets.push(
+            { x: player.x - 20, y: player.y - player.height / 2, width: bulletWidth, height: bulletHeight },
+            { x: player.x + 20, y: player.y - player.height / 2, width: bulletWidth, height: bulletHeight }
+        );
+    } else {
+        bullets.push({ x: player.x, y: player.y - player.height / 2, width: bulletWidth, height: bulletHeight });
+    }
+}
+
+function toggleAutoFire() {
+    autoFire = !autoFire;
+    autoFireBtn.textContent = autoFire ? 'Auto Fire: ON' : 'Auto Fire: OFF';
+    if (autoFire) {
+        autoFireInterval = setInterval(fire, player.fireRate);
+    } else {
+        clearInterval(autoFireInterval);
+    }
+}
+
+function applyPowerUp(type) {
+    switch (type) {
+        case 'fireRate':
+            player.fireRate = Math.max(100, player.fireRate - 50); // Reduced minimum fire rate decrement
+            if (autoFire) {
+                clearInterval(autoFireInterval);
+                autoFireInterval = setInterval(fire, player.fireRate);
+            }
+            break;
+        case 'biggerShot':
+            player.biggerShot = true;
+            setTimeout(() => player.biggerShot = false, 10000); // Power-up lasts 10 seconds
+            break;
+        case 'parallelShot':
+            player.parallelShot = true;
+            setTimeout(() => player.parallelShot = false, 10000); // Power-up lasts 10 seconds
+            break;
+    }
+}
+
+function endGame() {
+    gameOver = true;
+    clearInterval(gameLoop);
+    clearInterval(autoFireInterval);
+    gameOverScreen.classList.remove('hidden');
+    finalScoreSpan.textContent = score;
+}
+
+function pauseGame() {
+    gamePaused = true;
+    clearInterval(gameLoop);
+    pauseScreen.classList.remove('hidden');
+}
+
+function resumeGame() {
+    gamePaused = false;
+    gameLoop = setInterval(update, 1000 / 60);
+    pauseScreen.classList.add('hidden');
+}
+
+function checkPromoCodeConditions() {
+    if (promoCodeIndex >= promoCodes.length) return; // All promo codes have been displayed
+
+    let requiredScore, requiredParallelShots;
+
+    switch (promoCodeIndex) {
+        case 0:
+            requiredScore = 500;
+            requiredParallelShots = 3;
+            break;
+        case 1:
+            requiredScore = 1000;
+            requiredParallelShots = 5;
+            break;
+        case 2:
+            requiredScore = 1500;
+            requiredParallelShots = 7;
+            break;
+        case 3:
+            requiredScore = 2000;
+            requiredParallelShots = 8;
+            break;
+        case 4:
+            requiredScore = 2500;
+            requiredParallelShots = 9;
+            break;
+    }
+
+    if (score >= requiredScore && parallelShotCount >= requiredParallelShots) {
+        displayPromoCode(promoCodes[promoCodeIndex]);
+        promoCodeIndex++;
+        lastPromoScore = score; // Update the score of the last promo
+        parallelShotCount = 0;
+    }
+}
+
+function displayPromoCode(code) {
+    const promoCodeDiv = document.createElement('div');
+    promoCodeDiv.classList.add('promo-code');
+    promoCodeDiv.textContent = `Code✨: ${code}`;
+    promoCodesContainer.appendChild(promoCodeDiv);
+}
+
+
+// Event listeners (continued)
+startBtn.addEventListener('click', () => {
+    // Hide the start screen
+    startScreen.classList.add('hidden');
+
+    // Set and display the message with animation
+    messageText.textContent = ''; // Clear previous text
+    const message = "Incoming 🛰️.....:\n" + "We need YOU!\n" + " Our ship loaded with the spring collection📦 \n" + " has been ambushed by enemy forces!\n" + " They’re trying to steal our collection, but with your skills\n" + " we can fight back⚔️ and save the cargo.\n" + " Jump into the action, take down the enemy\n" + " and EARN EXCLUSIVE PROMO CODES💰 as your REWARDS\n" + " The future of fashion is at stake—don’t let them win!";
+    animateText(message, 0);
+
+    // Display and start the countdown
+    countdown.textContent = "25"; // Initialize to 3
+    gameMessage.style.display = "block";
+    let timeLeft = 25; // 3 seconds
+    const countdownInterval = setInterval(() => {
+        timeLeft--;
+        countdown.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+            gameMessage.style.display = "none"; // Hide the message
+            initGame(); // Start the game
+        }
+    }, 1000); // Update every 1 second
+});
+restartBtn.addEventListener('click', initGame);
+resumeBtn.addEventListener('click', resumeGame);
+
+leftBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const moveInterval = setInterval(moveLeft, 16);
+    leftBtn.addEventListener('touchend', () => clearInterval(moveInterval), { once: true });
+});
+
+rightBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const moveInterval = setInterval(moveRight, 16);
+    rightBtn.addEventListener('touchend', () => clearInterval(moveInterval), { once: true });
+});
+
+autoFireBtn.addEventListener('click', toggleAutoFire);
+
+canvas.addEventListener('touchstart', (e) => {
+    swipeStartX = e.touches[0].clientX;
+});
+
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const swipeEndX = e.touches[0].clientX;
+    const swipeDistance = swipeEndX - swipeStartX;
+    player.x += swipeDistance / 10;
+    player.x = Math.max(player.width / 2, Math.min(canvas.width - player.width / 2, player.x));
+    swipeStartX = swipeEndX;
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') moveLeft();
+    if (e.key === 'ArrowRight') moveRight();
+    if (e.key === ' ' || e.key === "Spacebar") fire();
+    if (e.key === 'Escape') {
+        if (gamePaused) {
+            resumeGame();
+        } else if (!gameOver && !startScreen.classList.contains('hidden')) {
+            pauseGame();
+        }
+    }
+});
+
+window.addEventListener('resize', resizeCanvas);
+
+// Start the game
+startScreen.classList.remove('hidden');
+
+
+// Function for text animation
+function animateText(message, index) {
+    if (index < message.length) {
+        messageText.textContent += message.charAt(index);
+        setTimeout(() => {
+            animateText(message, index + 1);
+        }, 50); // Adjust typing speed here (lower value = faster)
+    }
+}
+    </script>
+</body>
+</html>
