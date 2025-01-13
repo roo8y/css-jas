@@ -2,6 +2,7 @@
 const cacheName = "odoo-sw-cache-v8.7";
 const staticAssets = [
   "/offpage",
+  "/jaswar",
   "/mycss.css",
   "/splashy.js",
   "/web/assets/1/f90df56/web.assets_frontend.min.css",
