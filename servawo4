@@ -1,6 +1,7 @@
 /* eslint-disable */
-const cacheName = "odoo-sw-cache-v9.1";
+const cacheName = "odoo-sw-cache-v9.2";
 const staticAssets = [
+  "/offpage",
   "/jaswar",
   "/mycss.css",
   "/splashy.js",
