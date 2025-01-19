@@ -1,5 +1,5 @@
 /* eslint-disable */
-const cacheName = "odoo-sw-cache-v9.2";
+const cacheName = "odoo-sw-cache-v9.3";
 const staticAssets = [
   "/offpage",
   "/jaswar",
@@ -11,8 +11,6 @@ const staticAssets = [
   "/web/image/3254-94237309/parallel-fire-powerup.png",
   "/web/image/3255-6127b1bf/power-up.png",
   "/web/image/3256-ee7a091a/space-background.webp",
-  "/web/assets/1/f90df56/web.assets_frontend.min.css",
-  "/web/assets/1/8789456/web.assets_frontend_lazy.min.js",
   "/web/image/website/1/logo/JAS",
   "/web/image/1392-64c648a6/applog512.PNG",
   "/web/image/2383-25e321e0/sauce512.webp",
