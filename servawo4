@@ -1,5 +1,5 @@
 /* eslint-disable */
-const cacheName = "odoo-sw-cache-v9.3";
+const cacheName = "odoo-sw-cache-v9.5";
 const staticAssets = [
   "/offpage",
   "/jaswar",
@@ -18,7 +18,7 @@ const staticAssets = [
   "/manifest.json"
 ];
 
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.6.0/workbox-sw.js');
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.3.0/workbox-sw.js');
 
 self.addEventListener("install", (event) => {
   console.log('[Service Worker] Installing...');
